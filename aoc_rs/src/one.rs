@@ -48,3 +48,32 @@ pub fn p2(input: &str) -> i32 {
         .map(|i| i * appearances.get(&i).unwrap_or(&0))
         .sum()
 }
+
+pub fn p2_2(input: &str) -> i32 {
+    let (c1, c2): (Vec<i32>, Vec<i32>) = input
+        .lines()
+        .flat_map(|l| {
+            l.split_whitespace()
+                .map(|c| {
+                    c.parse::<i32>()
+                        .map_err(|e| format!("Failed to parse integer: {}", e.to_string()))
+                })
+                .collect::<Result<Vec<i32>, String>>()
+        })
+        .map(|l| (l[0], l[1]))
+        .unzip();
+
+    let appearances = c2.into_iter().fold(HashMap::new(), |mut acc, i| {
+        if let Some(sum) = acc.get(&i) {
+            acc.insert(i, sum + 1);
+            acc
+        } else {
+            acc.insert(i, 1);
+            acc
+        }
+    });
+
+    c1.into_iter()
+        .map(|i| i * appearances.get(&i).unwrap_or(&0))
+        .sum()
+}
